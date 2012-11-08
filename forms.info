@@ -6,7 +6,8 @@ core = 7.x
 dependencies[] = block
 dependencies[] = dblog
 
-; Some other stuff that ships as part of core but isn't enabled in the MINIMAL profile that this install is based on. 
+; Some other stuff that ships as part of core but isn't enabled in the MINIMAL 
+; profile that the "forms" profile is based on. 
 dependencies[] = contextual
 dependencies[] = dashboard
 dependencies[] = field
@@ -27,7 +28,9 @@ dependencies[] = features
 dependencies[] = strongarm
 dependencies[] = views
 dependencies[] = views_ui
-; Features module for creating the kitten content type.
+
+; Features module for creating the kitten content type and view.
 dependencies[] = feature_kittens
-; Custom module for providing the kitten submission form.
+
+; Custom module for providing the kitten information submission form.
 dependencies[] = forms_kittens

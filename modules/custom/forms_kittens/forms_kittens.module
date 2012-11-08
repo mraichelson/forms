@@ -1,6 +1,6 @@
 <?php
 /**
- * @file forms_kittens.module
+ * @file
  * The main module for providing custom content capture forms.
  */
 
@@ -27,8 +27,6 @@ function forms_kittens_permission() {
     ),
   );
 }
-
-
 
 /**
  * Implements hook_menu().
