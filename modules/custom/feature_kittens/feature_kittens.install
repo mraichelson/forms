@@ -1,0 +1,35 @@
+<?php
+/**
+ * @file feature_kittens.install
+ * This code will create and then populate a Taxonomy for kitten
+ * information that we can use on our content type.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function feature_kittens_install() {
+  // Terms to go into the kitten taxonomy.
+  $terms = array(
+    0 => 'Happy',
+    1 => 'Angry',
+    2 => 'Fluffy',
+    3 => 'Cute',
+    4 => 'Sad',
+    5 => 'I do not like kittens!',
+  );
+  // Create and populate the taxonomy for kittens.
+  taxonomy_vocabulary_save((object) array(
+    'name'         => 'Kinds of Kittens',
+    'machine_name' => 'kitten_types',
+  ));
+  $vid = taxonomy_vocabulary_machine_name_load('kitten_types')->vid;
+  foreach ($terms as $key => $value) {
+    $term = new stdClass();
+    $term->name                     = $value;
+    $term->weight                   = $key;
+    $term->vid                      = $vid;
+    $term->vocabulary_machine_name  = 'kitten_types';
+    taxonomy_term_save($term);
+  }
+}

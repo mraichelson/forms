@@ -1,0 +1,166 @@
+<?php
+/**
+ * @file forms_kittens.module
+ * The main module for providing custom content capture forms.
+ */
+
+/**
+ * Implements hook_init().
+ */
+function forms_kittens_init() {
+  // Use hook_init to add custom CSS and JS needed for the form
+  // layouts, structure and interaction.
+  $path = drupal_get_path('module', 'forms_kittens');
+  drupal_add_css($path . '/css/forms_kittens.css');
+  drupal_add_js($path . '/js/forms_kittens.js');
+}
+
+/**
+ * Implements hook_permission().
+ */
+function forms_kittens_permission() {
+  // This is a custom permission in case we want to disable the ability to use the form.
+  return array(
+    'submit kittens' =>  array(
+      'title' => t('Use kitten form'),
+      'description' => t('Able to access and submit content using the custom submission form.'),
+    ),
+  );
+}
+
+
+
+/**
+ * Implements hook_menu().
+ */
+function forms_kittens_menu() {
+  // Use hook_menu to provide a page with a set path for the form.
+  // Add a link to this page to the main menu.
+  $items['kittens-form'] = array(
+    'title' => 'Tell us what you think about kittens!',
+    'page callback' => 'kittens_form_page',
+    'access arguments' => array('access content'),
+    'menu_name' => 'main-menu',
+    'type' => MENU_NORMAL_ITEM,
+  );
+  return $items;
+}
+
+/**
+ * Page callback for constructing the form page.
+ */
+function kittens_form_page() {
+  // this constructs the kitten form page.
+  $form = drupal_get_form('forms_kittens_form');
+  $markup = drupal_render($form);
+  return $markup;
+}
+
+/**
+ * Implements hook_theme().
+ * Used to associate a custom .TPL file for rendering the form.
+ */
+function forms_kittens_theme($existing, $type, $theme, $path) {
+  $path = drupal_get_path('module', 'forms_kittens') . '/theme';
+  $themeables = array(
+    // the id of the form this set of config is for (this matches 
+    // up to the callback function that provides the form).
+    'forms_kittens_form' => array(
+      'arguments' => array('form' => NULL),
+      'path' => $path, // where to look for the template file.
+      'template' => 'kitten-form-template', // name of the template file WIHOUT .tpl.php extension
+      'render element' => 'form',
+    ),
+  );
+  return $themeables;
+}
+
+/**
+ * Implements hook_form().
+ */
+function forms_kittens_form($form_state, $form_id) {
+  // This is the actual kitten submission form.
+  $form = array(); // collection of fields to be included.
+  // Your Name field.
+  $form['your_name'] = array(
+    '#type'  => 'textfield',
+    '#title' => t('What is your name?'),
+  );
+  // "Do you like kittens?" field.
+  $form['likes_kittens'] = array(
+    '#type'    => 'select',
+    '#title'   => t('Do you like kittens?'),
+    '#options' => array('Yes', 'No', 'Only ones that are fluffy.'),
+  );
+  // "You want us to send you a box of kittens, right?" field. 
+  // This is a required field and shows the behavior when using the Drupal
+  // core #required property.
+  $form['gives_consent'] = array(
+    '#type'     => 'checkbox',
+    '#title'    => t('Check this box to receive a delivery of 17 kittens.'),
+    '#required' => TRUE,
+  );
+  // The "What is your favorite kind of kitten?" field is populated from
+  // the kitten_types taxonomy. 
+  // Get a list of kinds of kittens from a Taxonomy with the machine name kitten_types.
+  $taxonomy = taxonomy_vocabulary_machine_name_load('kitten_types');
+  $terms = taxonomy_get_tree($taxonomy->vid);
+  $kitten_types = array();
+  foreach ($terms as $term) {
+    $kitten_types[$term->tid] = $term->name;
+  }
+  // Assemble the "Kinds of kittens" field.
+  $form['kinds_of_kittens'] = array(
+    '#type' => 'select',
+    '#title' => t('What is your favorite kind of kitten?'),
+    '#options' => $kitten_types,
+  );
+  // Add a submit button.
+  $form['submit'] = array(
+    '#type'  => 'submit',
+    '#value' => t('Submit'),
+  );
+  return $form;
+}
+
+/**
+ * Custom form validation for the kittens form.
+ */
+function forms_kittens_form_validate($form, &$form_state) {
+  // The "Check this box to receive a shipment of kittens" field is validated automatically,
+  // the code here does not do anything with that field.
+  // (To show some of the differences between the default validation and custom validation.)
+  
+  // Apply custom validation to the "Your Name" field.
+  if (empty($form_state['values']['your_name'])) {
+    form_set_error('your_name', t('You need to tell us your name.'));
+  }
+}
+
+/**
+ * Submit handler for the kittens form.
+ */
+function forms_kittens_form_submit($form, &$form_state) {
+  // Create an object to hold our node values. 
+  $node = new stdClass();
+  $node->is_new   = TRUE;
+  $node->language = LANGUAGE_NONE; // We aren't dealing with i18n for this demo.
+  $node->type     = 'kittens';
+  $node->uid      = 0; // This is the UID to be flagged as owning this node.
+  node_object_prepare($node);
+  
+  // Assign values from the form fields that were submitted to our no.
+  $node->title = $form_state['values']['your_name'];
+  $node->field_likes_kittens[LANGUAGE_NONE][0]['value']  = $form_state['values']['likes_kittens'];
+  $node->field_gives_consent[LANGUAGE_NONE][0]['value']  = $form_state['values']['gives_consent'];
+  $node->field_taxonomy_kittens[LANGUAGE_NONE][0]['tid'] = $form_state['values']['kinds_of_kittens'];
+  
+  if ($node = node_submit($node)) {
+    node_save($node);
+    // Provide a message that the values were saved. 
+    drupal_set_message(t("Thank you for your submission! Y'all come back meow, ya hear?"), 'status');
+  }
+  else {
+    drupal_set_message(t("Sorry, something went wrong."), 'error');
+  }
+}

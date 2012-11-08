@@ -1,0 +1,7 @@
+name = Custom Kitten Forms
+description = Creates the custom Kitten information submission form for the demo.
+core = 7.x
+package = Kittens
+version = 7.x-1.0
+
+dependencies[] = feature_kittens

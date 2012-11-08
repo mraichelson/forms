@@ -1,0 +1,20 @@
+/**
+ * @file forms_kittens.css 
+ * Special layout and decoration styles for the Kittens form.
+ */
+#forms-kittens-form div.form-item {
+  padding:10px;
+}
+#forms-kittens-form div.form-item-hover {
+  background-color:#ffd;
+  border-radius:10px;
+}
+#forms-kittens-form div.row {
+  clear:both;
+}
+#forms-kittens-form div.columns {
+  float:left;
+  width:49%;
+}
+#forms-kittens-form div.submit-button { text-align:center; }
+#forms-kittens-form input { max-width:90%; }
