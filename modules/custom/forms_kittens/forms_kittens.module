@@ -76,7 +76,7 @@ function forms_kittens_theme($existing, $type, $theme, $path) {
 }
 
 /**
- * Implements hook_form().
+ * The custom form for gathering kitten data.
  */
 function forms_kittens_form($form_state, $form_id) {
   // This is the actual kitten submission form.
@@ -90,7 +90,11 @@ function forms_kittens_form($form_state, $form_id) {
   $form['likes_kittens'] = array(
     '#type'    => 'select',
     '#title'   => t('Do you like kittens?'),
-    '#options' => array('Yes', 'No', 'Only ones that are fluffy.'),
+    '#options' => array(
+      'yes'    => 'Yes', 
+      'no'     => 'No', 
+      'fluffy' => 'Only ones that are fluffy.'
+    ),
   );
   // "You want us to send you a box of kittens, right?" field. 
   // This is a required field and shows the behavior when using the Drupal
@@ -161,6 +165,7 @@ function forms_kittens_form_submit($form, &$form_state) {
     drupal_set_message(t("Thank you for your submission! Y'all come back meow, ya hear?"), 'status');
   }
   else {
+    // Let people know that something went wrong...
     drupal_set_message(t("Sorry, something went wrong."), 'error');
   }
 }
