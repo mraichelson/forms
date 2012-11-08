@@ -78,4 +78,8 @@ function forms_install() {
   // Enable default permissions for system roles.
   user_role_grant_permissions(DRUPAL_ANONYMOUS_RID, array('access content'));
   user_role_grant_permissions(DRUPAL_AUTHENTICATED_RID, array('access content'));
+  
+  // Set the administration theme to Seven.
+  variable_set('admin_theme', 'seven');
+  
 }
