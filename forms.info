@@ -1,6 +1,6 @@
 ; Basic setup from the MINIMAL install profile that ships with D7.
 name = Forms Demo
-description = A simple install profile for demoing custom forms for content entry.
+description = A simple install profile for demonstrating custom forms for content entry.
 version = 1.x
 core = 7.x
 dependencies[] = block
