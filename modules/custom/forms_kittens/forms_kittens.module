@@ -16,19 +16,6 @@ function forms_kittens_init() {
 }
 
 /**
- * Implements hook_permission().
- */
-function forms_kittens_permission() {
-  // This is a custom permission in case we want to disable the ability to use the form.
-  return array(
-    'submit kittens' =>  array(
-      'title' => t('Use kitten form'),
-      'description' => t('Able to access and submit content using the custom submission form.'),
-    ),
-  );
-}
-
-/**
  * Implements hook_menu().
  */
 function forms_kittens_menu() {
