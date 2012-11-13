@@ -25,5 +25,5 @@ As individual modules in an existing install (this is untested and may have repe
 
 > **WARNING:** If you're going to add this as modules to an existing Drupal installation please be aware that Content Types added via Features modules require additional poking around in the database by hand to remove even after you disable the Features module that created them. 
 > 
-> **TL;DR:** "If you these modules on in an existing install you will get a 'Kittens' content type that you won't be able to delete without going directly into the database itself."
+> **TL;DR:** "If you add these modules on in an existing install you will get a 'Kittens' content type that you won't be able to delete without going directly into the database itself."
 
