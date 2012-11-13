@@ -5,17 +5,6 @@
  */
 
 /**
- * Implements hook_init().
- */
-function forms_kittens_init() {
-  // Use hook_init to add custom CSS and JS needed for the form
-  // layouts, structure and interaction.
-  $path = drupal_get_path('module', 'forms_kittens');
-  drupal_add_css($path . '/css/forms_kittens.css');
-  drupal_add_js($path . '/js/forms_kittens.js');
-}
-
-/**
  * Implements hook_menu().
  */
 function forms_kittens_menu() {
@@ -35,10 +24,13 @@ function forms_kittens_menu() {
  * Page callback for constructing the form page.
  */
 function kittens_form_page() {
-  // this constructs the kitten form page.
+  // Add some customized CSS and JS for this page.
+  $path = drupal_get_path('module', 'forms_kittens');
+  drupal_add_css($path . '/css/forms_kittens.css');
+  drupal_add_js($path . '/js/forms_kittens.js');
+  // This constructs the kitten form page.
   $form = drupal_get_form('forms_kittens_form');
-  $markup = drupal_render($form);
-  return $markup;
+  return drupal_render($form);
 }
 
 /**
@@ -75,6 +67,9 @@ function forms_kittens_form($form_state, $form_id) {
   $form['likes_kittens'] = array(
     '#type'    => 'select',
     '#title'   => t('Do you like kittens?'),
+    // These options manually sync up to the ones from the content type field
+    // configuration. In the real world there are better ways to do this, but 
+    // this serves as an example of a manually-configured set of select options. 
     '#options' => array(
       'yes'    => 'Yes', 
       'no'     => 'No', 
@@ -144,7 +139,16 @@ function forms_kittens_form_submit($form, &$form_state) {
   $node->field_gives_consent[LANGUAGE_NONE][0]['value']  = $form_state['values']['gives_consent'];
   $node->field_taxonomy_kittens[LANGUAGE_NONE][0]['tid'] = $form_state['values']['kinds_of_kittens'];
   
+  // In a real-world application you would probably want to set submissions as
+  // "not published" by default and use a content moderation process to decide what 
+  // should be available on the site.
+  // 
+  // $node->status = 0; // mark node as unpublished.
+  
+  // node_submit() prepares a node for saving, we only want to trigger a save if
+  // that setup step gives us a proper response.
   if ($node = node_submit($node)) {
+    // Save our values as a new node.
     node_save($node);
     // Provide a message that the values were saved. 
     drupal_set_message(t("Thank you for your submission! Y'all come back meow, ya hear?"), 'status');
